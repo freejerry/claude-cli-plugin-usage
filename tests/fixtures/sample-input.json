@@ -1,0 +1,46 @@
+{
+  "model": {
+    "id": "claude-opus-4-6",
+    "display_name": "Opus 4.6"
+  },
+  "session_id": "abc123",
+  "context_window": {
+    "context_window_size": 200000,
+    "used_percentage": 78.5,
+    "remaining_percentage": 21.5,
+    "total_input_tokens": 125000,
+    "total_output_tokens": 32000,
+    "current_usage": {
+      "input_tokens": 5000,
+      "output_tokens": 1200,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3000
+    }
+  },
+  "cost": {
+    "total_cost_usd": 1.23,
+    "total_duration_ms": 360000,
+    "total_api_duration_ms": 120000,
+    "total_lines_added": 45,
+    "total_lines_removed": 12
+  },
+  "rate_limits": {
+    "five_hour": {
+      "used_percentage": 32.5,
+      "resets_at": 1743580800
+    },
+    "seven_day": {
+      "used_percentage": 15.2,
+      "resets_at": 1744012800
+    }
+  },
+  "worktree": {
+    "name": null,
+    "path": null,
+    "branch": "main"
+  },
+  "workspace": {
+    "current_dir": "/Users/test/project",
+    "project_dir": "/Users/test/project"
+  }
+}
