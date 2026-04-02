@@ -33,12 +33,32 @@ describe('detectPlan', () => {
     assert.strictEqual(result, 'api');
   });
 
+  it('detects Max user even when rate_limits not yet loaded', () => {
+    const result = detectPlan({
+      fiveHourPercent: null,
+      sevenDayPercent: null,
+      contextWindowSize: 1000000,
+      costUsd: 0,
+    });
+    assert.strictEqual(result, 'max');
+  });
+
   it('detects Free user (no rate_limits, no cost)', () => {
     const result = detectPlan({
       fiveHourPercent: null,
       sevenDayPercent: null,
       contextWindowSize: 200000,
       costUsd: null,
+    });
+    assert.strictEqual(result, 'free');
+  });
+
+  it('treats cost=0 as free, not api', () => {
+    const result = detectPlan({
+      fiveHourPercent: null,
+      sevenDayPercent: null,
+      contextWindowSize: 200000,
+      costUsd: 0,
     });
     assert.strictEqual(result, 'free');
   });

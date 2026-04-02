@@ -7,6 +7,7 @@ const os = require('node:os');
 const STATUSLINE_CONFIG = {
   type: 'command',
   command: 'claude-cli-plugin-usage',
+  padding: 0,
 };
 
 function injectSettings(settingsPath) {

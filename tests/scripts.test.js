@@ -25,6 +25,7 @@ describe('postinstall / preuninstall', () => {
       assert.deepStrictEqual(content.statusLine, {
         type: 'command',
         command: 'claude-cli-plugin-usage',
+        padding: 0,
       });
     });
 
@@ -36,6 +37,7 @@ describe('postinstall / preuninstall', () => {
       assert.deepStrictEqual(content.statusLine, {
         type: 'command',
         command: 'claude-cli-plugin-usage',
+        padding: 0,
       });
     });
 

@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
-const { render, buildProgressBar, buildSegment } = require('../src/powerline.js');
+const { render, buildProgressBar, buildSegment, visibleLength, stripAnsi } = require('../src/powerline.js');
 const { DEFAULT_CONFIG } = require('../src/config.js');
 const { getTheme } = require('../src/theme.js');
 
@@ -33,6 +33,34 @@ describe('powerline', () => {
       assert.ok(result.includes('\x1b[48;5;25m'));
       assert.ok(result.includes('\x1b[38;5;255m'));
       assert.ok(result.includes(' hello '));
+    });
+  });
+
+  describe('stripAnsi', () => {
+    it('removes ANSI escape codes', () => {
+      assert.strictEqual(stripAnsi('\x1b[48;5;25mhello\x1b[0m'), 'hello');
+    });
+
+    it('returns plain text unchanged', () => {
+      assert.strictEqual(stripAnsi('hello'), 'hello');
+    });
+  });
+
+  describe('visibleLength', () => {
+    it('counts plain ASCII as 1 each', () => {
+      assert.strictEqual(visibleLength('hello'), 5);
+    });
+
+    it('counts emoji as 2 wide', () => {
+      assert.strictEqual(visibleLength('🧠'), 2);
+    });
+
+    it('ignores ANSI codes', () => {
+      assert.strictEqual(visibleLength('\x1b[48;5;25mAB\x1b[0m'), 2);
+    });
+
+    it('counts powerline arrow as 2 wide', () => {
+      assert.strictEqual(visibleLength('\ue0b0'), 2);
     });
   });
 

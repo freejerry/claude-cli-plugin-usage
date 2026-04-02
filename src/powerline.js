@@ -47,8 +47,7 @@ function buildRatelimitSegment(parsed, plan, config, theme) {
     const cost = `$${parsed.costUsd.toFixed(2)}`;
     return { text: ` 💰 ${cost} `, bg: theme.ratelimit, fg: theme.textLight };
   }
-  // Pro/Max — show rate limits
-  if (parsed.fiveHourPercent == null && parsed.sevenDayPercent == null) return null;
+  // Pro/Max — always show rate limits, use — as placeholder if not yet loaded
   const fh = parsed.fiveHourPercent != null ? Math.round(parsed.fiveHourPercent) : '—';
   const sd = parsed.sevenDayPercent != null ? Math.round(parsed.sevenDayPercent) : '—';
   const fhColor = typeof fh === 'number'
@@ -72,6 +71,40 @@ const SEGMENT_BUILDERS = {
   ratelimit: (parsed, plan, config, theme) => buildRatelimitSegment(parsed, plan, config, theme),
 };
 
+function stripAnsi(str) {
+  return str.replace(/\x1b\[[0-9;]*m/g, '');
+}
+
+function visibleLength(str) {
+  const stripped = stripAnsi(str);
+  // Emoji and CJK characters are typically 2 columns wide
+  let len = 0;
+  for (const ch of stripped) {
+    const code = ch.codePointAt(0);
+    if (
+      code >= 0x1F000 || // emoji & symbols
+      (code >= 0x2600 && code <= 0x27BF) || // misc symbols
+      (code >= 0x2B50 && code <= 0x2B55) || // stars
+      (code >= 0xE000 && code <= 0xF8FF) || // private use (powerline)
+      (code >= 0x4E00 && code <= 0x9FFF) || // CJK
+      (code >= 0x3000 && code <= 0x303F)    // CJK punctuation
+    ) {
+      len += 2;
+    } else {
+      len += 1;
+    }
+  }
+  return len;
+}
+
+function getTerminalWidth() {
+  try {
+    return process.stdout.columns || process.stderr.columns || 80;
+  } catch {
+    return 80;
+  }
+}
+
 function render(parsed, plan, config) {
   const theme = getTheme(config.theme);
   const segments = [];
@@ -85,15 +118,35 @@ function render(parsed, plan, config) {
 
   if (segments.length === 0) return '';
 
-  let output = '';
+  // Build content: segments with arrows between them, NO trailing arrow
+  let contentParts = [];
+  let contentVisLen = 0;
   for (let i = 0; i < segments.length; i++) {
     const seg = segments[i];
-    output += buildSegment(seg.text, seg.bg, seg.fg);
-    const nextBg = i + 1 < segments.length ? segments[i + 1].bg : null;
-    output += buildTransition(seg.bg, nextBg);
+    const segStr = buildSegment(seg.text, seg.bg, seg.fg);
+    contentParts.push(segStr);
+    contentVisLen += visibleLength(seg.text);
+
+    if (i + 1 < segments.length) {
+      const arrow = buildTransition(seg.bg, segments[i + 1].bg);
+      contentParts.push(arrow);
+      contentVisLen += 1; // arrow  is 1 visible char
+    }
   }
+
+  let output = contentParts.join('');
+
+  // Pad remaining width with last segment's bg, then trailing arrow
+  const termWidth = getTerminalWidth();
+  const lastBg = segments[segments.length - 1].bg;
+  const remaining = termWidth - contentVisLen - 1; // -1 for trailing arrow
+  if (remaining > 0) {
+    output += `${ansi256Bg(lastBg)}${' '.repeat(remaining)}`;
+  }
+  // Trailing arrow: last segment bg → default terminal bg
+  output += buildTransition(lastBg, null);
 
   return output;
 }
 
-module.exports = { render, buildProgressBar, buildSegment };
+module.exports = { render, buildProgressBar, buildSegment, visibleLength, stripAnsi };
