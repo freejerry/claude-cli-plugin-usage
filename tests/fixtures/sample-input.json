@@ -27,11 +27,11 @@
   "rate_limits": {
     "five_hour": {
       "used_percentage": 32.5,
-      "resets_at": 1743580800
+      "resets_at": 2527200000
     },
     "seven_day": {
       "used_percentage": 15.2,
-      "resets_at": 1744012800
+      "resets_at": 2527632000
     }
   },
   "worktree": {

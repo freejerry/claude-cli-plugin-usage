@@ -22,6 +22,10 @@ describe('integration: cli.js end-to-end', () => {
     assert.ok(result.includes('15%'), 'should contain 7d rate limit');
     assert.ok(result.includes('\x1b['), 'should contain ANSI escape codes');
     assert.ok(result.includes('\x1b[48;5;'), 'should contain powerline background color transitions');
+    assert.ok(result.includes('\n'), 'should contain newline separator');
+    assert.ok(result.includes('📁'), 'second line should show session');
+    assert.ok(result.includes('↻'), 'second line should show reset icon');
+    assert.ok(result.includes('project'), 'session name should be project_dir basename');
   });
 
   it('renders gracefully for empty JSON input', () => {
@@ -49,5 +53,7 @@ describe('integration: cli.js end-to-end', () => {
     });
     assert.ok(result.includes('$1.23'), 'should show cost');
     assert.ok(!result.includes('5h'), 'should not show rate limits');
+    assert.ok(result.includes('📁'), 'API user should still see session name');
+    assert.ok(!result.includes('↻'), 'API user should not see reset icon');
   });
 });

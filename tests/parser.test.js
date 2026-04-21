@@ -17,9 +17,9 @@ describe('parser', () => {
     assert.strictEqual(result.contextPercent, 78.5);
     assert.strictEqual(result.contextWindowSize, 200000);
     assert.strictEqual(result.fiveHourPercent, 32.5);
-    assert.strictEqual(result.fiveHourResetsAt, 1743580800);
+    assert.strictEqual(result.fiveHourResetsAt, 2527200000);
     assert.strictEqual(result.sevenDayPercent, 15.2);
-    assert.strictEqual(result.sevenDayResetsAt, 1744012800);
+    assert.strictEqual(result.sevenDayResetsAt, 2527632000);
     assert.strictEqual(result.costUsd, 1.23);
   });
 
