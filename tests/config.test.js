@@ -25,4 +25,30 @@ describe('config', () => {
     const result = mergeConfig(userConfig);
     assert.deepStrictEqual(result.segments, ['context', 'model']);
   });
+
+  it('includes secondLine in defaults', () => {
+    const result = mergeConfig(null);
+    assert.deepStrictEqual(result.secondLine, {
+      enabled: true,
+      show: ['session', 'resets'],
+    });
+  });
+
+  it('allows disabling secondLine', () => {
+    const result = mergeConfig({ secondLine: { enabled: false } });
+    assert.strictEqual(result.secondLine.enabled, false);
+    assert.deepStrictEqual(result.secondLine.show, ['session', 'resets']);
+  });
+
+  it('allows overriding secondLine show list', () => {
+    const result = mergeConfig({ secondLine: { show: ['session'] } });
+    assert.strictEqual(result.secondLine.enabled, true);
+    assert.deepStrictEqual(result.secondLine.show, ['session']);
+  });
+
+  it('preserves defaults when secondLine is absent', () => {
+    const result = mergeConfig({ theme: 'minimal' });
+    assert.strictEqual(result.secondLine.enabled, true);
+    assert.deepStrictEqual(result.secondLine.show, ['session', 'resets']);
+  });
 });

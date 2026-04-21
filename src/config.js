@@ -14,10 +14,14 @@ const DEFAULT_CONFIG = {
   ratelimit: {
     thresholds: { warn: 60, danger: 80 },
   },
+  secondLine: {
+    enabled: true,
+    show: ['session', 'resets'],
+  },
 };
 
 function mergeConfig(userConfig) {
-  if (!userConfig) return { ...DEFAULT_CONFIG };
+  if (!userConfig) return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   return {
     theme: userConfig.theme ?? DEFAULT_CONFIG.theme,
     segments: userConfig.segments ?? [...DEFAULT_CONFIG.segments],
@@ -33,6 +37,10 @@ function mergeConfig(userConfig) {
         warn: userConfig.ratelimit?.thresholds?.warn ?? DEFAULT_CONFIG.ratelimit.thresholds.warn,
         danger: userConfig.ratelimit?.thresholds?.danger ?? DEFAULT_CONFIG.ratelimit.thresholds.danger,
       },
+    },
+    secondLine: {
+      enabled: userConfig.secondLine?.enabled ?? DEFAULT_CONFIG.secondLine.enabled,
+      show: userConfig.secondLine?.show ?? [...DEFAULT_CONFIG.secondLine.show],
     },
   };
 }
