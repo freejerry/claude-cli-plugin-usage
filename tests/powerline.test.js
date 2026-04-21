@@ -158,5 +158,62 @@ describe('powerline', () => {
       const modelIdx = result.indexOf('Opus 4.6');
       assert.ok(ctxIdx < modelIdx, 'context should appear before model');
     });
+
+    it('renders second line with session name', () => {
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: null,
+        sevenDayPercent: null,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: null,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const result = render(parsed, 'free', DEFAULT_CONFIG);
+      assert.ok(result.includes('\n'), 'output should contain a newline');
+      assert.ok(result.includes('📁 mvp'), 'second line should show session');
+    });
+
+    it('omits second line entirely when disabled', () => {
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: null,
+        sevenDayPercent: null,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: null,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const config = {
+        ...DEFAULT_CONFIG,
+        secondLine: { enabled: false, show: ['session', 'resets'] },
+      };
+      const result = render(parsed, 'free', config);
+      assert.ok(!result.includes('\n'), 'output should not contain a newline');
+      assert.ok(!result.includes('📁'), 'no session icon');
+    });
+
+    it('omits second line when sessionName is null and no resets available', () => {
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: null,
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: null,
+        sevenDayPercent: null,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: null,
+        costUsd: null,
+        sessionName: null,
+      };
+      const result = render(parsed, 'free', DEFAULT_CONFIG);
+      assert.ok(!result.includes('\n'), 'no newline when second line would be empty');
+    });
   });
 });

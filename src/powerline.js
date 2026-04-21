@@ -1,6 +1,7 @@
 'use strict';
 
 const { getTheme, ansi256Bg, ansi256Fg, reset, buildTransition } = require('./theme.js');
+const { formatResetDelta } = require('./format-duration.js');
 
 function buildProgressBar(percent, width) {
   const filled = Math.round((percent / 100) * width);
@@ -148,10 +149,35 @@ function renderFirstLine(parsed, plan, config, theme) {
   return output;
 }
 
+function renderSecondLine(parsed, plan, config, theme, now) {
+  if (!config.secondLine?.enabled) return '';
+  const show = config.secondLine.show || [];
+  if (show.length === 0) return '';
+
+  const text = ansi256Fg(theme.secondaryText);
+  const dim = ansi256Fg(theme.secondaryDim);
+  const sep = `${dim} │ ${text}`;
+
+  const blocks = [];
+  for (const name of show) {
+    if (name === 'session' && parsed.sessionName) {
+      blocks.push(`📁 ${parsed.sessionName}`);
+    }
+    // 'resets' handled in the next task
+  }
+
+  if (blocks.length === 0) return '';
+  return `${text}${blocks.join(sep)}${reset()}`;
+}
+
 function render(parsed, plan, config, now = Math.floor(Date.now() / 1000)) {
   const theme = getTheme(config.theme);
   const first = renderFirstLine(parsed, plan, config, theme);
-  return first; // second line added in next task
+  const second = renderSecondLine(parsed, plan, config, theme, now);
+  if (!first && !second) return '';
+  if (!second) return first;
+  if (!first) return second;
+  return `${first}\n${second}`;
 }
 
-module.exports = { render, renderFirstLine, buildProgressBar, buildSegment, visibleLength, stripAnsi };
+module.exports = { render, renderFirstLine, renderSecondLine, buildProgressBar, buildSegment, visibleLength, stripAnsi };
