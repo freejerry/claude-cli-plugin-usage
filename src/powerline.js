@@ -105,8 +105,7 @@ function getTerminalWidth() {
   }
 }
 
-function render(parsed, plan, config) {
-  const theme = getTheme(config.theme);
+function renderFirstLine(parsed, plan, config, theme) {
   const segments = [];
 
   for (const name of config.segments) {
@@ -149,4 +148,10 @@ function render(parsed, plan, config) {
   return output;
 }
 
-module.exports = { render, buildProgressBar, buildSegment, visibleLength, stripAnsi };
+function render(parsed, plan, config, now = Math.floor(Date.now() / 1000)) {
+  const theme = getTheme(config.theme);
+  const first = renderFirstLine(parsed, plan, config, theme);
+  return first; // second line added in next task
+}
+
+module.exports = { render, renderFirstLine, buildProgressBar, buildSegment, visibleLength, stripAnsi };
