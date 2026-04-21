@@ -215,5 +215,123 @@ describe('powerline', () => {
       const result = render(parsed, 'free', DEFAULT_CONFIG);
       assert.ok(!result.includes('\n'), 'no newline when second line would be empty');
     });
+
+    it('renders second line with 5h and 7d countdown for Pro user', () => {
+      const NOW = 1_700_000_000;
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: 32,
+        sevenDayPercent: 15,
+        fiveHourResetsAt: NOW + 2 * 3600 + 15 * 60, // 2h15m
+        sevenDayResetsAt: NOW + 3 * 86400 + 12 * 3600, // 3d12h
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const result = render(parsed, 'pro', DEFAULT_CONFIG, NOW);
+      assert.ok(result.includes('📁 mvp'));
+      assert.ok(result.includes('↻ 5h 2h15m'));
+      assert.ok(result.includes('7d 3d12h'));
+    });
+
+    it('hides resets block for API plan', () => {
+      const NOW = 1_700_000_000;
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: null,
+        sevenDayPercent: null,
+        fiveHourResetsAt: NOW + 3600,
+        sevenDayResetsAt: NOW + 86400,
+        costUsd: 1.23,
+        sessionName: 'mvp',
+      };
+      const result = render(parsed, 'api', DEFAULT_CONFIG, NOW);
+      assert.ok(result.includes('📁 mvp'));
+      assert.ok(!result.includes('↻'), 'no reset icon for API plan');
+    });
+
+    it('hides resets block for free plan', () => {
+      const NOW = 1_700_000_000;
+      const parsed = {
+        modelName: 'Sonnet 4.6',
+        branch: 'main',
+        contextPercent: 20,
+        contextWindowSize: 200000,
+        fiveHourPercent: null,
+        sevenDayPercent: null,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: null,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const result = render(parsed, 'free', DEFAULT_CONFIG, NOW);
+      assert.ok(result.includes('📁 mvp'));
+      assert.ok(!result.includes('↻'));
+    });
+
+    it('shows only 7d when 5h resets_at is null', () => {
+      const NOW = 1_700_000_000;
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: 32,
+        sevenDayPercent: 15,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: NOW + 2 * 86400,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const result = render(parsed, 'pro', DEFAULT_CONFIG, NOW);
+      assert.ok(!result.includes('↻ 5h'), 'no 5h label in resets block');
+      assert.ok(result.includes('↻ 7d 2d0h'));
+    });
+
+    it('shows em-dash when reset is in the past', () => {
+      const NOW = 1_700_000_000;
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: 32,
+        sevenDayPercent: 15,
+        fiveHourResetsAt: NOW - 60,
+        sevenDayResetsAt: NOW + 86400,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const result = render(parsed, 'pro', DEFAULT_CONFIG, NOW);
+      assert.ok(result.includes('5h —'));
+    });
+
+    it('honors custom secondLine.show order and filtering', () => {
+      const NOW = 1_700_000_000;
+      const parsed = {
+        modelName: 'Opus 4.6',
+        branch: 'main',
+        contextPercent: 45,
+        contextWindowSize: 200000,
+        fiveHourPercent: 32,
+        sevenDayPercent: 15,
+        fiveHourResetsAt: NOW + 3600,
+        sevenDayResetsAt: NOW + 86400,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const config = {
+        ...DEFAULT_CONFIG,
+        secondLine: { enabled: true, show: ['resets'] },
+      };
+      const result = render(parsed, 'pro', config, NOW);
+      assert.ok(!result.includes('📁'), 'session hidden');
+      assert.ok(result.includes('↻'), 'resets shown');
+    });
   });
 });

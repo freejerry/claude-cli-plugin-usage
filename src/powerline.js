@@ -162,8 +162,16 @@ function renderSecondLine(parsed, plan, config, theme, now) {
   for (const name of show) {
     if (name === 'session' && parsed.sessionName) {
       blocks.push(`📁 ${parsed.sessionName}`);
+    } else if (name === 'resets' && plan !== 'free' && plan !== 'api') {
+      const fh = formatResetDelta(parsed.fiveHourResetsAt, now);
+      const sd = formatResetDelta(parsed.sevenDayResetsAt, now);
+      const parts = [];
+      if (fh != null) parts.push(`5h ${fh}`);
+      if (sd != null) parts.push(`7d ${sd}`);
+      if (parts.length > 0) {
+        blocks.push(`↻ ${parts.join(sep)}`);
+      }
     }
-    // 'resets' handled in the next task
   }
 
   if (blocks.length === 0) return '';
