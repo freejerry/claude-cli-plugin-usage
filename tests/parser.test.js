@@ -75,6 +75,13 @@ describe('parser', () => {
     assert.strictEqual(result.sessionName, 'project');
   });
 
+  it('falls back to project_dir when worktree.name is empty string', () => {
+    const raw = loadFixture('sample-input.json');
+    raw.worktree = { name: '', path: '/tmp', branch: 'main' };
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, 'project');
+  });
+
   it('falls back to current_dir basename when project_dir is null', () => {
     const raw = loadFixture('sample-input.json');
     raw.workspace = { current_dir: '/home/user/my-app', project_dir: null };
