@@ -19,6 +19,24 @@ describe('theme', () => {
       const def = getTheme('default');
       assert.deepStrictEqual(theme, def);
     });
+
+    it('default theme has secondaryText and secondaryDim', () => {
+      const theme = getTheme('default');
+      assert.strictEqual(theme.secondaryText, 245);
+      assert.strictEqual(theme.secondaryDim, 240);
+    });
+
+    it('minimal theme has secondaryText and secondaryDim', () => {
+      const theme = getTheme('minimal');
+      assert.strictEqual(typeof theme.secondaryText, 'number');
+      assert.strictEqual(typeof theme.secondaryDim, 'number');
+    });
+
+    it('solarized theme has secondaryText and secondaryDim', () => {
+      const theme = getTheme('solarized');
+      assert.strictEqual(typeof theme.secondaryText, 'number');
+      assert.strictEqual(typeof theme.secondaryDim, 'number');
+    });
   });
 
   describe('ansi helpers', () => {

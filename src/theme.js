@@ -10,6 +10,8 @@ const THEMES = {
     ratelimit: 240,  // dark gray
     textLight: 255,  // white text
     textDark: 232,   // black text
+    secondaryText: 245,  // light gray
+    secondaryDim: 240,   // dark gray
   },
   minimal: {
     model: 238,
@@ -20,6 +22,8 @@ const THEMES = {
     ratelimit: 238,
     textLight: 255,
     textDark: 232,
+    secondaryText: 245,
+    secondaryDim: 240,
   },
   solarized: {
     model: 33,
@@ -30,6 +34,8 @@ const THEMES = {
     ratelimit: 241,
     textLight: 230,
     textDark: 235,
+    secondaryText: 245,
+    secondaryDim: 240,
   },
 };
 
