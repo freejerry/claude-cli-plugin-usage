@@ -60,4 +60,45 @@ describe('parser', () => {
     assert.strictEqual(result.fiveHourPercent, null);
     assert.strictEqual(result.costUsd, null);
   });
+
+  it('resolves sessionName from worktree.name when present', () => {
+    const raw = loadFixture('sample-input.json');
+    raw.worktree = { name: 'feat-auth', path: '/tmp', branch: 'feat-auth' };
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, 'feat-auth');
+  });
+
+  it('falls back to project_dir basename when worktree.name is null', () => {
+    const raw = loadFixture('sample-input.json');
+    // fixture has worktree.name = null and project_dir = /Users/test/project
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, 'project');
+  });
+
+  it('falls back to current_dir basename when project_dir is null', () => {
+    const raw = loadFixture('sample-input.json');
+    raw.workspace = { current_dir: '/home/user/my-app', project_dir: null };
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, 'my-app');
+  });
+
+  it('returns null sessionName when all sources are null', () => {
+    const raw = {};
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, null);
+  });
+
+  it('handles trailing slash in project_dir', () => {
+    const raw = loadFixture('sample-input.json');
+    raw.workspace = { project_dir: '/Users/test/project/', current_dir: null };
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, 'project');
+  });
+
+  it('handles windows-style backslash paths', () => {
+    const raw = loadFixture('sample-input.json');
+    raw.workspace = { project_dir: 'C:\\Users\\test\\my-repo', current_dir: null };
+    const result = parseInput(raw);
+    assert.strictEqual(result.sessionName, 'my-repo');
+  });
 });
