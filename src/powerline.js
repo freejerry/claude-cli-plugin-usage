@@ -23,6 +23,10 @@ function getRateLimitColor(percent, thresholds, theme) {
   return theme.textLight;
 }
 
+function hasRateLimits(plan) {
+  return plan !== 'free' && plan !== 'api';
+}
+
 function buildModelSegment(parsed, theme) {
   if (!parsed.modelName) return null;
   return { text: ` 🧠 ${parsed.modelName} `, bg: theme.model, fg: theme.textLight };
@@ -42,12 +46,12 @@ function buildContextSegment(parsed, config, theme) {
 }
 
 function buildRatelimitSegment(parsed, plan, config, theme) {
-  if (plan === 'free') return null;
   if (plan === 'api') {
     if (parsed.costUsd == null) return null;
     const cost = `$${parsed.costUsd.toFixed(2)}`;
     return { text: ` 💰 ${cost} `, bg: theme.ratelimit, fg: theme.textLight };
   }
+  if (!hasRateLimits(plan)) return null;
   // Pro/Max — always show rate limits, use — as placeholder if not yet loaded
   const fh = parsed.fiveHourPercent != null ? Math.round(parsed.fiveHourPercent) : '—';
   const sd = parsed.sevenDayPercent != null ? Math.round(parsed.sevenDayPercent) : '—';
@@ -162,12 +166,12 @@ function renderSecondLine(parsed, plan, config, theme, now) {
   for (const name of show) {
     if (name === 'session' && parsed.sessionName) {
       blocks.push(`📁 ${parsed.sessionName}`);
-    } else if (name === 'resets' && plan !== 'free' && plan !== 'api') {
-      const fh = formatResetDelta(parsed.fiveHourResetsAt, now);
-      const sd = formatResetDelta(parsed.sevenDayResetsAt, now);
+    } else if (name === 'resets' && hasRateLimits(plan)) {
+      const fiveHourDelta = formatResetDelta(parsed.fiveHourResetsAt, now);
+      const sevenDayDelta = formatResetDelta(parsed.sevenDayResetsAt, now);
       const parts = [];
-      if (fh != null) parts.push(`5h ${fh}`);
-      if (sd != null) parts.push(`7d ${sd}`);
+      if (fiveHourDelta != null) parts.push(`5h ${fiveHourDelta}`);
+      if (sevenDayDelta != null) parts.push(`7d ${sevenDayDelta}`);
       if (parts.length > 0) {
         blocks.push(`↻ ${parts.join(sep)}`);
       }

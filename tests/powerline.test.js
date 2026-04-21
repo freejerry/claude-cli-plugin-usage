@@ -264,8 +264,8 @@ describe('powerline', () => {
         contextWindowSize: 200000,
         fiveHourPercent: null,
         sevenDayPercent: null,
-        fiveHourResetsAt: null,
-        sevenDayResetsAt: null,
+        fiveHourResetsAt: NOW + 3600,
+        sevenDayResetsAt: NOW + 86400,
         costUsd: null,
         sessionName: 'mvp',
       };
@@ -332,6 +332,25 @@ describe('powerline', () => {
       const result = render(parsed, 'pro', config, NOW);
       assert.ok(!result.includes('📁'), 'session hidden');
       assert.ok(result.includes('↻'), 'resets shown');
+    });
+
+    it('renders second line alone when first line has no segments', () => {
+      const parsed = {
+        modelName: null,
+        branch: null,
+        contextPercent: null,
+        contextWindowSize: null,
+        fiveHourPercent: null,
+        sevenDayPercent: null,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: null,
+        costUsd: null,
+        sessionName: 'mvp',
+      };
+      const config = { ...DEFAULT_CONFIG, segments: [] };
+      const result = render(parsed, 'free', config);
+      assert.ok(!result.startsWith('\n'), 'should not have leading newline');
+      assert.ok(result.includes('📁 mvp'));
     });
   });
 });
