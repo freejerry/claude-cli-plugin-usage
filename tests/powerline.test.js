@@ -75,8 +75,8 @@ describe('powerline', () => {
         contextWindowSize: 200000,
         fiveHourPercent: 32,
         sevenDayPercent: 15,
-        fiveHourResetsAt: 1743580800,
-        sevenDayResetsAt: 1744012800,
+        fiveHourResetsAt: null,
+        sevenDayResetsAt: null,
         costUsd: null,
       };
       const result = render(parsed, 'pro', DEFAULT_CONFIG);
