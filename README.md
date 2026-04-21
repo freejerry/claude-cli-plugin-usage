@@ -4,6 +4,7 @@ Powerline-style status line for [Claude Code CLI](https://claude.ai/code) — se
 
 ```
  🧠 Opus 4.6  main  ████████░░ 78%  ⚡ 5h 32% │ 7d 15% 
+📁 mvp │ ↻ 5h 2h15m │ 7d 3d12h
 ```
 
 ## Features
@@ -47,6 +48,15 @@ If automatic setup didn't work, add to `~/.claude/settings.json`:
 | ⚡ Rate Limits | 5h and 7d usage | Pro / Max |
 | 💰 Cost | Session cost in USD | API |
 
+## Second Line
+
+Below the Powerline, a low-key gray line shows:
+
+- **📁 Session name** — worktree name, or project folder name (fallback: current directory)
+- **↻ Reset countdowns** — time until the 5-hour and 7-day rate-limit windows reset (Pro / Max only)
+
+The second line is omitted when there's nothing to show, and can be disabled entirely via config.
+
 ## Configuration
 
 Create `~/.claude/claude-cli-plugin-usage.json` to customize:
@@ -61,9 +71,15 @@ Create `~/.claude/claude-cli-plugin-usage.json` to customize:
   },
   "ratelimit": {
     "thresholds": { "warn": 60, "danger": 80 }
+  },
+  "secondLine": {
+    "enabled": true,
+    "show": ["session", "resets"]
   }
 }
 ```
+
+Set `secondLine.enabled` to `false` to restore single-line output. Narrow `secondLine.show` (e.g. `["session"]`) to hide the reset countdown while keeping the session name.
 
 ### Themes
 
