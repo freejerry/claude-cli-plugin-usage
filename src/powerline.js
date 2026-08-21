@@ -2,6 +2,7 @@
 
 const { getTheme, ansi256Bg, ansi256Fg, reset, buildTransition } = require('./theme.js');
 const { formatResetDelta } = require('./format-duration.js');
+const { visibleLength, getTerminalWidth } = require('./width.js');
 
 function buildProgressBar(percent, width) {
   const filled = Math.round((percent / 100) * width);
@@ -76,40 +77,6 @@ const SEGMENT_BUILDERS = {
   ratelimit: (parsed, plan, config, theme) => buildRatelimitSegment(parsed, plan, config, theme),
 };
 
-function stripAnsi(str) {
-  return str.replace(/\x1b\[[0-9;]*m/g, '');
-}
-
-function visibleLength(str) {
-  const stripped = stripAnsi(str);
-  // Emoji and CJK characters are typically 2 columns wide
-  let len = 0;
-  for (const ch of stripped) {
-    const code = ch.codePointAt(0);
-    if (
-      code >= 0x1F000 || // emoji & symbols
-      (code >= 0x2600 && code <= 0x27BF) || // misc symbols
-      (code >= 0x2B50 && code <= 0x2B55) || // stars
-      (code >= 0xE000 && code <= 0xF8FF) || // private use (powerline)
-      (code >= 0x4E00 && code <= 0x9FFF) || // CJK
-      (code >= 0x3000 && code <= 0x303F)    // CJK punctuation
-    ) {
-      len += 2;
-    } else {
-      len += 1;
-    }
-  }
-  return len;
-}
-
-function getTerminalWidth() {
-  try {
-    return process.stdout.columns || process.stderr.columns || 80;
-  } catch {
-    return 80;
-  }
-}
-
 function renderFirstLine(parsed, plan, config, theme) {
   const segments = [];
 
@@ -134,6 +101,7 @@ function renderFirstLine(parsed, plan, config, theme) {
     if (i + 1 < segments.length) {
       const arrow = buildTransition(seg.bg, segments[i + 1].bg);
       contentParts.push(arrow);
+      // ponytail: 箭頭寬度假設待查 — buildTransition 目前無 glyph，但 width.visibleLength('')===2
       contentVisLen += 1; // arrow  is 1 visible char
     }
   }
@@ -192,4 +160,4 @@ function render(parsed, plan, config, now = Math.floor(Date.now() / 1000)) {
   return `${first}\n${second}`;
 }
 
-module.exports = { render, renderFirstLine, renderSecondLine, buildProgressBar, buildSegment, visibleLength, stripAnsi };
+module.exports = { render, renderFirstLine, renderSecondLine, buildProgressBar, buildSegment };
