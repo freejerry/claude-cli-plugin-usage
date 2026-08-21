@@ -9,7 +9,7 @@
 This tool ships a single `statusLine` command and can be installed **either** way:
 
 - **A) npm package (default, fully automatic)** — `npm install -g claude-cli-plugin-usage`; a postinstall script writes the `statusLine` key into `~/.claude/settings.json` for you. Best for most users. Steps 1–4 below.
-- **B) Claude Code plugin** — the repo has a `.claude-plugin/` manifest and its own marketplace, so it's installable via `/plugin`. Note: a plugin **cannot** set the status line by itself, so after installing you run one command (or add one settings key) to enable it. See [Install as a Claude Code plugin](#install-as-a-claude-code-plugin).
+- **B) Claude Code plugin** — the repo has a `.claude-plugin/` manifest and its own marketplace, so it's installable via `/plugin`. Note: a plugin **cannot** set the main status line by itself (Claude Code has no plugin-native `statusLine`), so after installing you run one command that writes the `statusLine` key for you. See [Install as a Claude Code plugin](#install-as-a-claude-code-plugin).
 
 Whichever you pick, the status line is ultimately activated by a `statusLine` entry in `settings.json` — the two paths just differ in how that entry gets there.
 
@@ -96,21 +96,23 @@ Alternative to the npm path. In Claude Code:
 /plugin install claude-cli-plugin-usage@claude-cli-plugin-usage
 ```
 
-Then enable the status line (a plugin can't set it directly). Easiest:
+Then enable the status line (a plugin can't set it directly):
 
 ```
 /claude-cli-plugin-usage:enable-statusline
 ```
 
-That command merges this into `~/.claude/settings.json`:
+That command locates the plugin's installed `bin/cli.js` and merges this into `~/.claude/settings.json` (with a real absolute path):
 
 ```json
 {
-  "statusLine": { "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/bin/cli.js" }
+  "statusLine": { "type": "command", "command": "node /absolute/path/to/plugin/bin/cli.js" }
 }
 ```
 
-`${CLAUDE_PLUGIN_ROOT}` is expanded by Claude Code to the plugin's install directory — keep it literal. Restart Claude Code afterwards. Configuration (Step 4) works the same for plugin installs.
+⚠️ Claude Code does **not** expand `${CLAUDE_PLUGIN_ROOT}` inside the `statusLine` field — a literal absolute path must be written, so re-run the command after each plugin update. Restart Claude Code afterwards. Configuration (Step 4) works the same for plugin installs.
+
+To do it by hand instead: find the path with `find ~/.claude/plugins -path '*claude-cli-plugin-usage*/bin/cli.js'` and put `node <that-path>` in the `statusLine.command`.
 
 ## Uninstall
 
