@@ -55,10 +55,14 @@ function reset() {
   return '\x1b[0m';
 }
 
+// Powerline right-pointing separator (U+E0B0). Renders as a single cell in
+// a powerline-patched font: a triangle in `fromBg`'s color over `toBg`.
+const ARROW = '';
+
 function buildTransition(fromBg, toBg) {
   const fg = ansi256Fg(fromBg);
   const bg = toBg != null ? ansi256Bg(toBg) : '\x1b[49m';
-  return `${fg}${bg}\x1b[0m`;
+  return `${fg}${bg}${ARROW}\x1b[0m`;
 }
 
 module.exports = { getTheme, ansi256Bg, ansi256Fg, reset, buildTransition, THEMES };

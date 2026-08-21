@@ -16,8 +16,8 @@ describe('width', () => {
       assert.strictEqual(visibleLength('\x1b[48;5;25mAB\x1b[0m'), 2);
     });
 
-    it('counts powerline arrow as 2 wide', () => {
-      assert.strictEqual(visibleLength('\ue0b0'), 2);
+    it('counts powerline arrow as a single cell', () => {
+      assert.strictEqual(visibleLength('\ue0b0'), 1);
     });
 
     it('counts CJK as 2 wide', () => {

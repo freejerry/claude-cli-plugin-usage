@@ -14,9 +14,10 @@ function visibleLength(str) {
       code >= 0x1F000 || // emoji & symbols
       (code >= 0x2600 && code <= 0x27BF) || // misc symbols
       (code >= 0x2B50 && code <= 0x2B55) || // stars
-      (code >= 0xE000 && code <= 0xF8FF) || // private use (powerline)
       (code >= 0x4E00 && code <= 0x9FFF) || // CJK
       (code >= 0x3000 && code <= 0x303F)    // CJK punctuation
+      // Note: powerline private-use glyphs (U+E0xx) render as a single cell,
+      // so they are intentionally NOT width-2 here.
     ) {
       len += 2;
     } else {

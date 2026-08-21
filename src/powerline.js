@@ -101,8 +101,7 @@ function renderFirstLine(parsed, plan, config, theme) {
     if (i + 1 < segments.length) {
       const arrow = buildTransition(seg.bg, segments[i + 1].bg);
       contentParts.push(arrow);
-      // ponytail: 箭頭寬度假設待查 — buildTransition 目前無 glyph，但 width.visibleLength('')===2
-      contentVisLen += 1; // arrow  is 1 visible char
+      contentVisLen += visibleLength(arrow);
     }
   }
 
@@ -111,12 +110,13 @@ function renderFirstLine(parsed, plan, config, theme) {
   // Pad remaining width with last segment's bg, then trailing arrow
   const termWidth = getTerminalWidth();
   const lastBg = segments[segments.length - 1].bg;
-  const remaining = termWidth - contentVisLen - 1; // -1 for trailing arrow
+  // Trailing arrow: last segment bg → default terminal bg
+  const trailingArrow = buildTransition(lastBg, null);
+  const remaining = termWidth - contentVisLen - visibleLength(trailingArrow);
   if (remaining > 0) {
     output += `${ansi256Bg(lastBg)}${' '.repeat(remaining)}`;
   }
-  // Trailing arrow: last segment bg → default terminal bg
-  output += buildTransition(lastBg, null);
+  output += trailingArrow;
 
   return output;
 }

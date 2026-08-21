@@ -58,12 +58,12 @@ describe('theme', () => {
   describe('buildTransition', () => {
     it('renders powerline arrow with correct fg/bg', () => {
       const result = buildTransition(25, 133);
-      assert.strictEqual(result, '\x1b[38;5;25m\x1b[48;5;133m\x1b[0m');
+      assert.strictEqual(result, '\x1b[38;5;25m\x1b[48;5;133m\ue0b0\x1b[0m');
     });
 
     it('renders trailing arrow with no next bg', () => {
       const result = buildTransition(240, null);
-      assert.strictEqual(result, '\x1b[38;5;240m\x1b[49m\x1b[0m');
+      assert.strictEqual(result, '\x1b[38;5;240m\x1b[49m\ue0b0\x1b[0m');
     });
   });
 });
