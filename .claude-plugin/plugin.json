@@ -1,0 +1,13 @@
+{
+  "name": "claude-cli-plugin-usage",
+  "description": "Powerline-style status line for Claude Code — model, git, context, rate limits, and reset countdowns.",
+  "version": "0.2.0",
+  "author": {
+    "name": "freejerry",
+    "url": "https://github.com/freejerry"
+  },
+  "homepage": "https://github.com/freejerry/claude-cli-plugin-usage",
+  "repository": "https://github.com/freejerry/claude-cli-plugin-usage",
+  "license": "MIT",
+  "keywords": ["statusline", "powerline", "claude-code", "usage"]
+}

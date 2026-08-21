@@ -61,7 +61,10 @@
 
 ## Installation
 
-> **Note:** despite `plugin` in the name, this is **not** a Claude Code plugin — there's no `.claude-plugin/` directory and no marketplace entry. It's an npm package that installs a `statusLine` command and wires it into `~/.claude/settings.json`. Install it with npm as below, not via the plugin flow.
+Two ways to install — both end up adding a `statusLine` entry to your `settings.json`:
+
+- **npm** (fully automatic) — recommended for most users.
+- **Claude Code plugin** — via `/plugin`; you run one command afterward to enable the status line.
 
 ### Via npm (recommended)
 
@@ -78,6 +81,23 @@ git clone https://github.com/freejerry/claude-cli-plugin-usage.git
 cd claude-cli-plugin-usage
 npm install -g .
 ```
+
+### As a Claude Code plugin
+
+The repo doubles as its own plugin marketplace. In Claude Code:
+
+```
+/plugin marketplace add freejerry/claude-cli-plugin-usage
+/plugin install claude-cli-plugin-usage@claude-cli-plugin-usage
+```
+
+A plugin can't set the status line on its own, so enable it afterward with the bundled command:
+
+```
+/claude-cli-plugin-usage:enable-statusline
+```
+
+It merges `{ "statusLine": { "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/bin/cli.js" } }` into your `settings.json` (`${CLAUDE_PLUGIN_ROOT}` is expanded by Claude Code). Restart Claude Code afterward.
 
 ### Manual setup
 
@@ -207,6 +227,11 @@ Claude Code status bar
 
 ```
 claude-cli-plugin-usage/
+├── .claude-plugin/
+│   ├── plugin.json         # Claude Code plugin manifest
+│   └── marketplace.json    # self-hosted marketplace entry
+├── commands/
+│   └── enable-statusline.md # /claude-cli-plugin-usage:enable-statusline
 ├── bin/cli.js              # entry point — stdin/stdout orchestration
 ├── src/
 │   ├── parser.js           # raw JSON → clean fields

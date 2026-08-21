@@ -4,11 +4,14 @@
 > Goal: install and enable this status line for the human you're helping, then verify it works.
 > Raw URL: `https://raw.githubusercontent.com/freejerry/claude-cli-plugin-usage/main/docs/agent-install.md`
 
-## ⚠️ Read first — this is NOT a Claude Code plugin
+## Read first — two ways to install
 
-Despite the `plugin` in the name, this is **not** a Claude Code plugin and has **no `.claude-plugin/` directory** — don't look for one, and don't try to install it via the plugin marketplace / `/plugin` flow.
+This tool ships a single `statusLine` command and can be installed **either** way:
 
-It's a plain **npm package** that ships a single `statusLine` command. You install it with `npm`, and it's wired into Claude Code through the `statusLine` key in `~/.claude/settings.json` (the installer does this automatically). Follow the steps below — not any plugin-install procedure.
+- **A) npm package (default, fully automatic)** — `npm install -g claude-cli-plugin-usage`; a postinstall script writes the `statusLine` key into `~/.claude/settings.json` for you. Best for most users. Steps 1–4 below.
+- **B) Claude Code plugin** — the repo has a `.claude-plugin/` manifest and its own marketplace, so it's installable via `/plugin`. Note: a plugin **cannot** set the status line by itself, so after installing you run one command (or add one settings key) to enable it. See [Install as a Claude Code plugin](#install-as-a-claude-code-plugin).
+
+Whichever you pick, the status line is ultimately activated by a `statusLine` entry in `settings.json` — the two paths just differ in how that entry gets there.
 
 ## Preconditions
 
@@ -84,13 +87,42 @@ Only if the user wants to customize. Write `~/.claude/claude-cli-plugin-usage.js
 - `secondLine.enabled: false` → single-line output
 - `secondLine.show`: subset of `session`, `resets`
 
+## Install as a Claude Code plugin
+
+Alternative to the npm path. In Claude Code:
+
+```
+/plugin marketplace add freejerry/claude-cli-plugin-usage
+/plugin install claude-cli-plugin-usage@claude-cli-plugin-usage
+```
+
+Then enable the status line (a plugin can't set it directly). Easiest:
+
+```
+/claude-cli-plugin-usage:enable-statusline
+```
+
+That command merges this into `~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": { "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/bin/cli.js" }
+}
+```
+
+`${CLAUDE_PLUGIN_ROOT}` is expanded by Claude Code to the plugin's install directory — keep it literal. Restart Claude Code afterwards. Configuration (Step 4) works the same for plugin installs.
+
 ## Uninstall
+
+npm install:
 
 ```bash
 npm uninstall -g claude-cli-plugin-usage
 ```
 
 The preuninstall script removes the `statusLine` block it added. For a manual (2b) setup, delete the `statusLine` key yourself.
+
+Plugin install: remove the `statusLine` key from `~/.claude/settings.json`, then `/plugin uninstall claude-cli-plugin-usage@claude-cli-plugin-usage`.
 
 ## Troubleshooting
 

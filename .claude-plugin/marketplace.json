@@ -1,0 +1,14 @@
+{
+  "name": "claude-cli-plugin-usage",
+  "owner": {
+    "name": "freejerry",
+    "url": "https://github.com/freejerry"
+  },
+  "plugins": [
+    {
+      "name": "claude-cli-plugin-usage",
+      "source": ".",
+      "description": "Powerline-style status line for Claude Code."
+    }
+  ]
+}
