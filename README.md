@@ -250,14 +250,13 @@ Each `src/` module has a matching `tests/*.test.js` (unit), plus `tests/integrat
 ## Roadmap
 
 - [x] Publish to npm registry
-- [ ] Fix the arrow-width undercount (see [Known Limitations](#known-limitations))
+- [x] Fix the arrow-width undercount
 - [ ] Configurable second-line blocks beyond `session` / `resets`
 - [ ] Additional built-in themes
 - [ ] CI workflow (lint + test on push)
 
 ## Known Limitations
 
-- **Arrow-width undercount.** Each powerline transition arrow is counted as 1 column during layout, but the glyph (`U+E0B0`) is 2 columns wide. On lines that approach the terminal width, the first line can overflow by a few columns. Tracked in-code with a `ponytail:` comment in `src/powerline.js`.
 - **Experimental.** As an AI-generated project, edge cases in unusual terminals or payload shapes may not be fully covered.
 
 ## Contributing
