@@ -97,7 +97,7 @@ A plugin can't set the status line on its own, so enable it afterward with the b
 /claude-cli-plugin-usage:enable-statusline
 ```
 
-It finds the plugin's installed `bin/cli.js` and merges `{ "statusLine": { "type": "command", "command": "node <absolute-path>/bin/cli.js" } }` into your `settings.json`. (Claude Code does **not** expand `${CLAUDE_PLUGIN_ROOT}` in the `statusLine` field, so a real absolute path is written; re-run the command after updating the plugin.) Restart Claude Code afterward.
+It resolves the tool's `bin/cli.js` — first from the plugin cache, then falling back to a global npm install (`command -v claude-cli-plugin-usage`), and finally asking you — then merges `{ "statusLine": { "type": "command", "command": "node <absolute-path>/bin/cli.js" } }` into your `settings.json`. (Claude Code does **not** expand `${CLAUDE_PLUGIN_ROOT}` in the `statusLine` field, so a real absolute path is written; re-run the command after updating the plugin.) Restart Claude Code afterward.
 
 ### Manual setup
 
