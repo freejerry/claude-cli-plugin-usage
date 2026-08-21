@@ -61,6 +61,8 @@
 
 ## Installation
 
+> **Note:** despite `plugin` in the name, this is **not** a Claude Code plugin — there's no `.claude-plugin/` directory and no marketplace entry. It's an npm package that installs a `statusLine` command and wires it into `~/.claude/settings.json`. Install it with npm as below, not via the plugin flow.
+
 ### Via npm (recommended)
 
 ```bash

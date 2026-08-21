@@ -4,6 +4,12 @@
 > Goal: install and enable this status line for the human you're helping, then verify it works.
 > Raw URL: `https://raw.githubusercontent.com/freejerry/claude-cli-plugin-usage/main/docs/agent-install.md`
 
+## ⚠️ Read first — this is NOT a Claude Code plugin
+
+Despite the `plugin` in the name, this is **not** a Claude Code plugin and has **no `.claude-plugin/` directory** — don't look for one, and don't try to install it via the plugin marketplace / `/plugin` flow.
+
+It's a plain **npm package** that ships a single `statusLine` command. You install it with `npm`, and it's wired into Claude Code through the `statusLine` key in `~/.claude/settings.json` (the installer does this automatically). Follow the steps below — not any plugin-install procedure.
+
 ## Preconditions
 
 - Node.js ≥ 18 — check: `node -v`
