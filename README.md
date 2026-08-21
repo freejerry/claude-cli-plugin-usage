@@ -2,6 +2,8 @@
 
 **Powerline-style status line for the [Claude Code CLI](https://claude.ai/code)** — see your model, git branch, context usage, rate limits, and reset countdowns at a glance.
 
+[![npm version](https://img.shields.io/npm/v/claude-cli-plugin-usage.svg)](https://www.npmjs.com/package/claude-cli-plugin-usage)
+[![npm downloads](https://img.shields.io/npm/dm/claude-cli-plugin-usage.svg)](https://www.npmjs.com/package/claude-cli-plugin-usage)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
 [![Tests](https://img.shields.io/badge/tests-81%20passing-brightgreen.svg)](#testing)
@@ -247,7 +249,7 @@ Each `src/` module has a matching `tests/*.test.js` (unit), plus `tests/integrat
 
 ## Roadmap
 
-- [ ] Publish to npm registry
+- [x] Publish to npm registry
 - [ ] Fix the arrow-width undercount (see [Known Limitations](#known-limitations))
 - [ ] Configurable second-line blocks beyond `session` / `resets`
 - [ ] Additional built-in themes
@@ -256,7 +258,6 @@ Each `src/` module has a matching `tests/*.test.js` (unit), plus `tests/integrat
 ## Known Limitations
 
 - **Arrow-width undercount.** Each powerline transition arrow is counted as 1 column during layout, but the glyph (`U+E0B0`) is 2 columns wide. On lines that approach the terminal width, the first line can overflow by a few columns. Tracked in-code with a `ponytail:` comment in `src/powerline.js`.
-- **Not yet on npm.** `v0.1.0` is unpublished; install from source until the registry release lands.
 - **Experimental.** As an AI-generated project, edge cases in unusual terminals or payload shapes may not be fully covered.
 
 ## Contributing
