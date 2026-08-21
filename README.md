@@ -25,6 +25,8 @@ npm install -g claude-cli-plugin-usage
 
 That's it. The installer automatically configures Claude Code's status line.
 
+> **Using an AI agent?** Point it at [`docs/agent-install.md`](docs/agent-install.md) — a self-contained, copy-paste-runnable guide so any Claude Code agent can install, wire up, and verify this in one conversation. Raw: `https://raw.githubusercontent.com/freejerry/claude-cli-plugin-usage/main/docs/agent-install.md`
+
 ## Manual Setup
 
 If automatic setup didn't work, add to `~/.claude/settings.json`:
