@@ -1,35 +1,83 @@
 # claude-cli-plugin-usage
 
-Powerline-style status line for [Claude Code CLI](https://claude.ai/code) — see your model, git branch, context usage, and rate limits at a glance.
+**Powerline-style status line for the [Claude Code CLI](https://claude.ai/code)** — see your model, git branch, context usage, rate limits, and reset countdowns at a glance.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
+[![Tests](https://img.shields.io/badge/tests-81%20passing-brightgreen.svg)](#testing)
+[![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](package.json)
+[![Status](https://img.shields.io/badge/status-experimental%20v0.1.0-orange.svg)](#roadmap)
+[![AI Generated](https://img.shields.io/badge/🤖%20AI-generated-8A2BE2.svg)](#-ai-generated-project)
 
 ```
  🧠 Opus 4.6  main  ████████░░ 78%  ⚡ 5h 32% │ 7d 15% 
 📁 mvp │ ↻ 5h 2h15m │ 7d 3d12h
 ```
 
+---
+
+> ## 🤖 AI-Generated Project
+>
+> **This project was designed, implemented, tested, and documented by an AI agent (Claude / Claude Code).**
+> Every module, test, and doc — including this README — was produced through agent-driven development.
+> It works and is covered by tests, but treat it as an experiment: review the code before relying on it in
+> a critical setup, and see [Known Limitations](#known-limitations) for issues the agents deliberately left open.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [For AI Agents](#for-ai-agents)
+- [Configuration](#configuration)
+- [How It Works](#how-it-works)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [Testing](#testing)
+- [Roadmap](#roadmap)
+- [Known Limitations](#known-limitations)
+- [Contributing](#contributing)
+- [Troubleshooting](#troubleshooting)
+- [Requirements](#requirements)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
+
 ## Features
 
-- **Powerline visual style** with ANSI 256-color support
-- **Auto-detects your plan** — Free, Pro, Max, or API
-- **Dynamic context bar** — green → yellow → red as usage increases
-- **Rate limit tracking** — 5-hour and 7-day windows (Pro/Max)
-- **Cost tracking** — cumulative session cost (API users)
-- **Zero config** — works out of the box
-- **Cross-platform** — macOS, Linux, Windows (via Node.js)
+- **Powerline visual style** — ANSI 256-color segments with arrow transitions
+- **Auto-detects your plan** — Free, Pro, Max, or API, with no configuration
+- **Dynamic context bar** — green → yellow → red as context usage climbs
+- **Rate-limit tracking** — 5-hour and 7-day windows (Pro / Max)
+- **Reset countdowns** — time until each rate-limit window resets (Pro / Max)
+- **Cost tracking** — cumulative session cost in USD (API users)
+- **Session name line** — worktree / project / directory, at a glance
+- **Zero config** — sensible defaults out of the box; fully customizable when you want it
+- **Zero dependencies** — pure Node.js standard library
+- **Cross-platform** — macOS, Linux, Windows
 
-## Install
+## Installation
+
+### Via npm (recommended)
 
 ```bash
 npm install -g claude-cli-plugin-usage
 ```
 
-That's it. The installer automatically configures Claude Code's status line.
+The `postinstall` script automatically wires the status line into `~/.claude/settings.json`.
 
-> **Using an AI agent?** Point it at [`docs/agent-install.md`](docs/agent-install.md) — a self-contained, copy-paste-runnable guide so any Claude Code agent can install, wire up, and verify this in one conversation. Raw: `https://raw.githubusercontent.com/freejerry/claude-cli-plugin-usage/main/docs/agent-install.md`
+### From source
 
-## Manual Setup
+```bash
+git clone https://github.com/freejerry/claude-cli-plugin-usage.git
+cd claude-cli-plugin-usage
+npm install -g .
+```
 
-If automatic setup didn't work, add to `~/.claude/settings.json`:
+### Manual setup
+
+If automatic configuration didn't run, add this to `~/.claude/settings.json` (merge into existing keys — don't overwrite the file):
 
 ```json
 {
@@ -40,28 +88,39 @@ If automatic setup didn't work, add to `~/.claude/settings.json`:
 }
 ```
 
-## Segments
+Then restart Claude Code so it re-reads its settings.
+
+## Usage
+
+Once installed and wired up, the status line renders automatically at the bottom of every Claude Code session. Claude Code pipes a JSON status payload to the command on stdin; this tool parses it and prints one or two colored lines.
+
+**First line** — Powerline segments:
 
 | Segment | Shows | Plan |
 |---------|-------|------|
 | 🧠 Model | Current model name | All |
-|  Git | Current branch | All (hidden if not a git repo) |
+|  Git | Current branch (hidden outside a git repo) | All |
 | Context | Usage bar + percentage | All |
 | ⚡ Rate Limits | 5h and 7d usage | Pro / Max |
 | 💰 Cost | Session cost in USD | API |
 
-## Second Line
+**Second line** — a low-key gray line:
 
-Below the Powerline, a low-key gray line shows:
+- **📁 Session name** — worktree name, or project folder (fallback: current directory)
+- **↻ Reset countdowns** — time until the 5h and 7d windows reset (Pro / Max only)
 
-- **📁 Session name** — worktree name, or project folder name (fallback: current directory)
-- **↻ Reset countdowns** — time until the 5-hour and 7-day rate-limit windows reset (Pro / Max only)
+The second line is omitted when there's nothing to show and can be disabled via [configuration](#configuration).
 
-The second line is omitted when there's nothing to show, and can be disabled entirely via config.
+## For AI Agents
+
+Point any Claude Code agent at the self-contained, copy-paste-runnable install guide so it can install, wire up, and **verify** this tool in a single conversation:
+
+- In-repo: [`docs/agent-install.md`](docs/agent-install.md)
+- Raw URL: `https://raw.githubusercontent.com/freejerry/claude-cli-plugin-usage/main/docs/agent-install.md`
 
 ## Configuration
 
-Create `~/.claude/claude-cli-plugin-usage.json` to customize:
+All configuration is optional. To customize, create `~/.claude/claude-cli-plugin-usage.json`. Any omitted key falls back to its default:
 
 ```json
 {
@@ -81,7 +140,19 @@ Create `~/.claude/claude-cli-plugin-usage.json` to customize:
 }
 ```
 
-Set `secondLine.enabled` to `false` to restore single-line output. Narrow `secondLine.show` (e.g. `["session"]`) to hide the reset countdown while keeping the session name.
+### Options
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `theme` | string | `"default"` | Color theme — `default`, `minimal`, or `solarized` |
+| `segments` | string[] | `["model","git","context","ratelimit"]` | First-line segment order; also acts as show/hide |
+| `contextBar.width` | number | `10` | Width of the context progress bar, in cells |
+| `contextBar.thresholds.warn` | number | `60` | % at which the bar turns yellow |
+| `contextBar.thresholds.danger` | number | `80` | % at which the bar turns red |
+| `ratelimit.thresholds.warn` | number | `60` | Rate-limit warning threshold |
+| `ratelimit.thresholds.danger` | number | `80` | % at which rate-limit text turns red |
+| `secondLine.enabled` | boolean | `true` | Set `false` for single-line output |
+| `secondLine.show` | string[] | `["session","resets"]` | Which second-line blocks to render |
 
 ### Themes
 
@@ -89,28 +160,131 @@ Set `secondLine.enabled` to `false` to restore single-line output. Narrow `secon
 - `minimal` — monochrome with color alerts only
 - `solarized` — solarized palette
 
-### Segment Order
+### Segment order
 
-Reorder or hide segments:
+Reorder or hide first-line segments by editing `segments`:
 
 ```json
 { "segments": ["context", "model"] }
 ```
 
-## Uninstall
+## How It Works
 
-```bash
-npm uninstall -g claude-cli-plugin-usage
+A simple stdin → stdout pipeline, each stage a small pure module:
+
+```
+Claude Code
+    │  (JSON status payload on stdin)
+    ▼
+┌─────────────────────────────────────────────────────────┐
+│ bin/cli.js — read stdin, orchestrate, write stdout       │
+└─────────────────────────────────────────────────────────┘
+    │            │              │                │
+    ▼            ▼              ▼                ▼
+ parser.js  detector.js   config.js      powerline.js
+ (raw JSON  (Free/Pro/    (defaults +    (render segments +
+  → fields)  Max/API)      user overrides) second line)
+                                                │
+                                    theme.js · width.js · format-duration.js
+    │
+    ▼  (ANSI-colored line(s) on stdout)
+Claude Code status bar
 ```
 
-Settings are automatically cleaned up.
+- **`parser.js`** — extracts a clean field set from Claude Code's raw JSON.
+- **`detector.js`** — classifies the plan (1M context ⇒ Max, rate limits ⇒ Pro, cost-only ⇒ API, else Free).
+- **`config.js`** — loads `~/.claude/claude-cli-plugin-usage.json` and deep-merges over defaults.
+- **`powerline.js`** — builds segments and lays out the two lines.
+- **`theme.js`** — ANSI 256-color palettes and powerline transitions.
+- **`width.js`** — visible-width measurement (emoji/CJK-aware) and terminal width.
+- **`format-duration.js`** — human-readable reset countdowns (`2h15m`, `3d12h`).
+
+## Project Structure
+
+```
+claude-cli-plugin-usage/
+├── bin/cli.js              # entry point — stdin/stdout orchestration
+├── src/
+│   ├── parser.js           # raw JSON → clean fields
+│   ├── detector.js         # plan auto-detection
+│   ├── config.js           # defaults + user override merge
+│   ├── powerline.js        # segment building + layout
+│   ├── theme.js            # ANSI color themes
+│   ├── width.js            # visible-width / terminal-width helpers
+│   └── format-duration.js  # reset-countdown formatting
+├── scripts/
+│   ├── postinstall.js      # auto-inject statusLine into settings.json
+│   └── preuninstall.js     # remove it on uninstall
+├── tests/                  # node:test suites + fixtures
+└── docs/
+    └── agent-install.md    # LLM-oriented install guide
+```
+
+## Development
+
+```bash
+git clone https://github.com/freejerry/claude-cli-plugin-usage.git
+cd claude-cli-plugin-usage
+npm install          # no runtime deps; installs nothing but sets up the repo
+npm test             # run the full suite
+```
+
+Run the renderer locally by piping a sample payload:
+
+```bash
+echo '{"model":{"display_name":"Opus 4.6"},"worktree":{"branch":"main"},"context_window":{"used_percentage":78,"context_window_size":200000}}' | node bin/cli.js
+```
+
+## Testing
+
+Tests use Node's built-in test runner (`node:test`) — no framework, no fixtures beyond a sample JSON file.
+
+```bash
+npm test
+```
+
+Each `src/` module has a matching `tests/*.test.js` (unit), plus `tests/integration.test.js` exercising the full stdin → stdout pipeline. Current status: **81 tests passing**.
+
+## Roadmap
+
+- [ ] Publish to npm registry
+- [ ] Fix the arrow-width undercount (see [Known Limitations](#known-limitations))
+- [ ] Configurable second-line blocks beyond `session` / `resets`
+- [ ] Additional built-in themes
+- [ ] CI workflow (lint + test on push)
+
+## Known Limitations
+
+- **Arrow-width undercount.** Each powerline transition arrow is counted as 1 column during layout, but the glyph (`U+E0B0`) is 2 columns wide. On lines that approach the terminal width, the first line can overflow by a few columns. Tracked in-code with a `ponytail:` comment in `src/powerline.js`.
+- **Not yet on npm.** `v0.1.0` is unpublished; install from source until the registry release lands.
+- **Experimental.** As an AI-generated project, edge cases in unusual terminals or payload shapes may not be fully covered.
+
+## Contributing
+
+Everyone's welcome to help maintain this — no ceremony required.
+
+Open an issue, or send a PR. If you're adding logic, a quick `npm test` to keep it green is appreciated. That's it.
+
+## Troubleshooting
+
+- **No arrows / boxes shown** → your terminal needs a [Powerline-compatible font](https://github.com/powerline/fonts).
+- **Second line missing** → expected when there's nothing to show (no session name, no rate limits), or `secondLine.enabled` is `false`.
+- **Rate-limit / reset segments absent** → only Pro/Max plans expose `rate_limits`; Free/API won't show them.
+- **`[claude-cli-plugin-usage: parse error]`** → the stdin JSON was malformed; check what Claude Code is sending.
+- **Nothing changes in Claude Code** → restart the session so it re-reads `settings.json`.
 
 ## Requirements
 
-- Node.js >= 18 (you already have it if you use Claude Code)
+- Node.js ≥ 18 (already present if you use Claude Code)
 - A terminal with ANSI 256-color support
-- [Powerline-compatible font](https://github.com/powerline/fonts) for arrow glyphs
+- A [Powerline-compatible font](https://github.com/powerline/fonts) for arrow glyphs
 
 ## License
 
-MIT
+[MIT](LICENSE)
+
+## Acknowledgements
+
+- Built for the [Claude Code CLI](https://claude.ai/code).
+- Visual style inspired by [Powerline](https://github.com/powerline/powerline).
+- Designed and implemented by AI agents via agent-driven development.

@@ -11,6 +11,13 @@
     "preuninstall": "node scripts/preuninstall.js"
   },
   "keywords": ["claude", "claude-code", "cli", "statusline", "powerline", "usage"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freejerry/claude-cli-plugin-usage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freejerry/claude-cli-plugin-usage/issues"
+  },
   "author": "",
   "license": "MIT",
   "engines": {
