@@ -1,6 +1,6 @@
 {
   "name": "claude-cli-plugin-usage",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Powerline-style status line plugin for Claude Code CLI — shows model, context usage, rate limits, and cost",
   "bin": {
     "claude-cli-plugin-usage": "./bin/cli.js"
