@@ -4,6 +4,8 @@ const { render, buildProgressBar, buildSegment } = require('../src/powerline.js'
 const { DEFAULT_CONFIG } = require('../src/config.js');
 const { getTheme } = require('../src/theme.js');
 
+const plain = (s) => s.replace(/\x1b\[[0-9;]*m/g, '');
+
 describe('powerline', () => {
   describe('buildProgressBar', () => {
     it('renders 0%', () => {
@@ -204,8 +206,10 @@ describe('powerline', () => {
       };
       const result = render(parsed, 'pro', DEFAULT_CONFIG, NOW);
       assert.ok(result.includes('📁 mvp'));
-      assert.ok(result.includes('↻ 5h 2h15m'));
-      assert.ok(result.includes('7d 3d12h'));
+      assert.ok(plain(result).includes('↻ 5h 2h15m'));
+      assert.ok(plain(result).includes('7d 3d12h'));
+      // countdown value is colored, label is not
+      assert.ok(result.includes(`↻ 5h ${'\x1b[38;5;'}`));
     });
 
     it('hides resets block for API plan', () => {
@@ -262,7 +266,7 @@ describe('powerline', () => {
       };
       const result = render(parsed, 'pro', DEFAULT_CONFIG, NOW);
       assert.ok(!result.includes('↻ 5h'), 'no 5h label in resets block');
-      assert.ok(result.includes('↻ 7d 2d0h'));
+      assert.ok(plain(result).includes('↻ 7d 2d0h'));
     });
 
     it('shows em-dash when reset is in the past', () => {
@@ -280,7 +284,7 @@ describe('powerline', () => {
         sessionName: 'mvp',
       };
       const result = render(parsed, 'pro', DEFAULT_CONFIG, NOW);
-      assert.ok(result.includes('5h —'));
+      assert.ok(plain(result).includes('5h —'));
     });
 
     it('honors custom secondLine.show order and filtering', () => {

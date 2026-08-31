@@ -131,7 +131,7 @@ Once installed and wired up, the status line renders automatically at the bottom
 **Second line** — a low-key gray line:
 
 - **📁 Session name** — worktree name, or project folder (fallback: current directory)
-- **↻ Reset countdowns** — time until the 5h and 7d windows reset (Pro / Max only)
+- **↻ Reset countdowns** — time until the 5h and 7d windows reset (Pro / Max only); the value is highlighted, turning green when the reset is under an hour away
 
 The second line is omitted when there's nothing to show and can be disabled via [configuration](#configuration).
 

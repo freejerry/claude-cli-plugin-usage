@@ -28,6 +28,12 @@ function hasRateLimits(plan) {
   return plan !== 'free' && plan !== 'api';
 }
 
+// Reset countdown: bright so it reads at a glance, green once relief is under
+// an hour away. ponytail: fixed threshold, make it config if asked.
+function getResetColor(resetsAt, now, theme) {
+  return resetsAt - now <= 3600 ? theme.contextOk : theme.textLight;
+}
+
 function buildModelSegment(parsed, theme) {
   if (!parsed.modelName) return null;
   return { text: ` 🧠 ${parsed.modelName} `, bg: theme.model, fg: theme.textLight };
@@ -138,8 +144,10 @@ function renderSecondLine(parsed, plan, config, theme, now) {
       const fiveHourDelta = formatResetDelta(parsed.fiveHourResetsAt, now);
       const sevenDayDelta = formatResetDelta(parsed.sevenDayResetsAt, now);
       const parts = [];
-      if (fiveHourDelta != null) parts.push(`5h ${fiveHourDelta}`);
-      if (sevenDayDelta != null) parts.push(`7d ${sevenDayDelta}`);
+      const val = (delta, resetsAt) =>
+        `${ansi256Fg(getResetColor(resetsAt, now, theme))}${delta}${text}`;
+      if (fiveHourDelta != null) parts.push(`5h ${val(fiveHourDelta, parsed.fiveHourResetsAt)}`);
+      if (sevenDayDelta != null) parts.push(`7d ${val(sevenDayDelta, parsed.sevenDayResetsAt)}`);
       if (parts.length > 0) {
         blocks.push(`↻ ${parts.join(sep)}`);
       }
