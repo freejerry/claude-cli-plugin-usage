@@ -1,6 +1,6 @@
 {
   "name": "claude-cli-plugin-usage",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Powerline-style status line plugin for Claude Code CLI — shows model, context usage, rate limits, and cost",
   "bin": {
     "claude-cli-plugin-usage": "./bin/cli.js"
@@ -10,7 +10,14 @@
     "postinstall": "node scripts/postinstall.js",
     "preuninstall": "node scripts/preuninstall.js"
   },
-  "keywords": ["claude", "claude-code", "cli", "statusline", "powerline", "usage"],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "cli",
+    "statusline",
+    "powerline",
+    "usage"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/freejerry/claude-cli-plugin-usage.git"
@@ -23,5 +30,9 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "files": ["bin/", "src/", "scripts/"]
+  "files": [
+    "bin/",
+    "src/",
+    "scripts/"
+  ]
 }
